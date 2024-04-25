@@ -5,7 +5,7 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import com.dicoding.asclepius.R
+import android.widget.Toast
 import com.dicoding.asclepius.database.CancerHistory
 import com.dicoding.asclepius.database.LocalDatabase
 import com.dicoding.asclepius.databinding.ActivityResultBinding
@@ -41,10 +41,12 @@ class ResultActivity : AppCompatActivity(), ImageClassifierHelper.ClassifierList
 
             if (imageUriString != null) {
                 val imageUri = Uri.parse(imageUriString)
+                showToast("Data saved")
                 Log.d(TAG, "Images saved successfully: $imageUriString")
                 Log.d(TAG, "Result saved successfully: $result")
                 SaveToDatabase(imageUri, result)
             } else {
+                showToast("No image URI provided")
                 Log.d(TAG, "Images Null: $imageUriString")
                 finish()
             }
@@ -85,7 +87,7 @@ class ResultActivity : AppCompatActivity(), ImageClassifierHelper.ClassifierList
 
     private fun SaveToDatabase(imageUri: Uri, result: String) {
         if (result.isNotEmpty()) {
-            val fileName = "${System.currentTimeMillis()}.jpg"
+            val fileName = "cropped_image_${System.currentTimeMillis()}.jpg"
             val destinationUri = Uri.fromFile(File(cacheDir, fileName))
             contentResolver.openInputStream(imageUri)?.use { input ->
                 FileOutputStream(File(cacheDir, fileName)).use { output ->
@@ -115,6 +117,10 @@ class ResultActivity : AppCompatActivity(), ImageClassifierHelper.ClassifierList
         runOnUiThread {
             Log.e(TAG, "Error: $error")
         }
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     companion object {

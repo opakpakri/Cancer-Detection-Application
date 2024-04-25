@@ -7,13 +7,15 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import com.dicoding.asclepius.R
 import com.dicoding.asclepius.databinding.ActivityMainBinding
+import com.yalantis.ucrop.UCrop
+import java.io.File
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     private var currentImageUri: Uri? = null
+    private var croppedImageUri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,8 +50,36 @@ class MainActivity : AppCompatActivity() {
             selectedImg?.let { uri ->
                 currentImageUri = uri
                 showImage()
+                startUCrop(uri)
             } ?: showToast("Failed to get image URI")
         }
+    }
+
+    private fun startUCrop(sourceUri: Uri) {
+        val fileName = "cropped_image_${System.currentTimeMillis()}.jpg"
+        val destinationUri = Uri.fromFile(File(cacheDir, fileName))
+        UCrop.of(sourceUri, destinationUri)
+            .withAspectRatio(1f, 1f)
+            .withMaxResultSize(1000, 1000)
+            .start(this)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == UCrop.REQUEST_CROP && resultCode == RESULT_OK) {
+            val resultUri = UCrop.getOutput(data!!)
+            resultUri?.let {
+                showCroppedImage(resultUri)
+            } ?: showToast("Failed to crop image")
+        } else if (resultCode == UCrop.RESULT_ERROR) {
+            val cropError = UCrop.getError(data!!)
+            showToast("Crop error: ${cropError?.message}")
+        }
+    }
+
+    private fun showCroppedImage(uri: Uri) {
+        binding.previewImageView.setImageURI(uri)
+        croppedImageUri = uri
     }
 
     private fun showImage() {
@@ -60,7 +90,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun analyzeImage() {
-        if (currentImageUri != null) {
+        if (croppedImageUri != null) {
             moveToResult()
         } else {
             showToast("Please select an image first")
@@ -69,7 +99,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun moveToResult() {
         val intent = Intent(this, ResultActivity::class.java)
-        intent.putExtra("imageUri", currentImageUri.toString())
+        intent.putExtra("imageUri", croppedImageUri.toString())
         startActivity(intent)
     }
 
