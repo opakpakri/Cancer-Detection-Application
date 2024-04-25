@@ -1,7 +1,5 @@
 package com.dicoding.asclepius.view
 
-import android.Manifest
-import android.content.ContentValues.TAG
 import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity

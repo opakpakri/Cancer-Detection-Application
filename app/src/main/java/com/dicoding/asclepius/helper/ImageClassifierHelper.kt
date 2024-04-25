@@ -1,6 +1,5 @@
 package com.dicoding.asclepius.helper
 
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
