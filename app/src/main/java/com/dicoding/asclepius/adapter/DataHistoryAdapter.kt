@@ -9,10 +9,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.dicoding.asclepius.R
-import com.dicoding.asclepius.database.CancerHistory
+import com.dicoding.asclepius.database.DataHistory
 
-class CancerHistoryAdapter(private val cancerHistoryList: List<CancerHistory>) :
-    RecyclerView.Adapter<CancerHistoryAdapter.ViewHolder>() {
+class DataHistoryAdapter(private val dataHistoryLists: List<DataHistory>) :
+    RecyclerView.Adapter<DataHistoryAdapter.ViewHolder>() {
 
     private var onDeleteClickListener: OnDeleteClickListener? = null
 
@@ -31,23 +31,23 @@ class CancerHistoryAdapter(private val cancerHistoryList: List<CancerHistory>) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val currentItem = cancerHistoryList[position]
+        val currentItem = dataHistoryLists[position]
         holder.bind(currentItem)
     }
 
-    override fun getItemCount() = cancerHistoryList.size
+    override fun getItemCount() = dataHistoryLists.size
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val imageView: ImageView = itemView.findViewById(R.id.Img)
         private val resultTextView: TextView = itemView.findViewById(R.id.tvCategory)
         private val deleteImageView: Button = itemView.findViewById(R.id.btnDelete)
 
-        fun bind(cancerHistory: CancerHistory) {
+        fun bind(dataHistory: DataHistory) {
             Glide.with(itemView.context)
-                .load(cancerHistory.imagePath)
+                .load(dataHistory.imagePath)
                 .into(imageView)
 
-            resultTextView.text = cancerHistory.result
+            resultTextView.text = dataHistory.result
 
             deleteImageView.setOnClickListener {
                 onDeleteClickListener?.onDeleteClick(adapterPosition)

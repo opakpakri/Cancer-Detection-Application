@@ -5,9 +5,9 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [CancerHistory::class], version = 1)
+@Database(entities = [DataHistory::class], version = 1)
 abstract class LocalDatabase : RoomDatabase() {
-    abstract fun cancerHistoryDao(): CancerHistoryDao
+    abstract fun cancerHistoryDao(): DataHistoryDao
 
     companion object {
         @Volatile
@@ -19,7 +19,7 @@ abstract class LocalDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     LocalDatabase::class.java,
-                    "Cancer_History_Database"
+                    "DataHistory"
                 ).build()
                 INSTANCE = instance
                 instance

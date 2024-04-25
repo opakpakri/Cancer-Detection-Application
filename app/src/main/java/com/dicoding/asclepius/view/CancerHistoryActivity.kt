@@ -4,24 +4,21 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dicoding.asclepius.R
-import com.dicoding.asclepius.adapter.CancerHistoryAdapter
-import com.dicoding.asclepius.database.CancerHistory
+import com.dicoding.asclepius.adapter.DataHistoryAdapter
+import com.dicoding.asclepius.database.DataHistory
 import com.dicoding.asclepius.database.LocalDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class CancerHistoryActivity : AppCompatActivity(), CancerHistoryAdapter.OnDeleteClickListener {
+class CancerHistoryActivity : AppCompatActivity(), DataHistoryAdapter.OnDeleteClickListener {
     private lateinit var historyRecyclerView: RecyclerView
-    private lateinit var historyAdapter: CancerHistoryAdapter
-    private var historyList: MutableList<CancerHistory> = mutableListOf()
+    private lateinit var historyAdapter: DataHistoryAdapter
+    private var historyList: MutableList<DataHistory> = mutableListOf()
     private lateinit var tvNotFound: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,7 +28,7 @@ class CancerHistoryActivity : AppCompatActivity(), CancerHistoryAdapter.OnDelete
         historyRecyclerView = findViewById(R.id.rvHistory)
         tvNotFound = findViewById(R.id.tvNotFound)
 
-        historyAdapter = CancerHistoryAdapter(historyList)
+        historyAdapter = DataHistoryAdapter(historyList)
         historyAdapter.setOnDeleteClickListener(this)
         historyRecyclerView.adapter = historyAdapter
         historyRecyclerView.layoutManager = LinearLayoutManager(this)

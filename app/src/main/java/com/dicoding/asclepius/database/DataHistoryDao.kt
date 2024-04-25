@@ -7,13 +7,13 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 
 @Dao
-interface CancerHistoryDao {
+interface DataHistoryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertHistory(history: CancerHistory)
+    suspend fun insertHistory(history: DataHistory)
 
-    @Query("SELECT * FROM CancerHistory")
-    suspend fun getAllHistory(): List<CancerHistory>
+    @Query("SELECT * FROM DataHistory")
+    suspend fun getAllHistory(): List<DataHistory>
 
     @Delete
-    suspend fun deleteHistory(history: CancerHistory)
+    suspend fun deleteHistory(history: DataHistory)
 }

@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import com.dicoding.asclepius.database.CancerHistory
+import com.dicoding.asclepius.database.DataHistory
 import com.dicoding.asclepius.database.LocalDatabase
 import com.dicoding.asclepius.databinding.ActivityResultBinding
 import com.dicoding.asclepius.helper.ImageClassifierHelper
@@ -44,12 +44,33 @@ class ResultActivity : AppCompatActivity(), ImageClassifierHelper.ClassifierList
                 showToast("Data saved")
                 Log.d(TAG, "Images saved successfully: $imageUriString")
                 Log.d(TAG, "Result saved successfully: $result")
-                SaveToDatabase(imageUri, result)
+                saveToDatabase(imageUri, result)
             } else {
                 showToast("No image URI provided")
                 Log.d(TAG, "Images Null: $imageUriString")
                 finish()
             }
+        }
+
+        binding.addButton.setOnClickListener {
+            val imageUriString = intent.getStringExtra("imageUri")
+            val result = binding.resultText.text.toString()
+
+            if (imageUriString != null) {
+                val imageUri = Uri.parse(imageUriString)
+                showToast("Data saved")
+                Log.d(TAG, "Images saved successfully: $imageUriString")
+                Log.d(TAG, "Result saved successfully: $result")
+                saveToDatabase(imageUri, result)
+            } else {
+                showToast("No image URI provided")
+                Log.d(TAG, "Images Null: $imageUriString")
+                finish()
+            }
+        }
+
+        binding.backButton.setOnClickListener {
+            finish()
         }
 
         if (imageUri != null) {
@@ -85,7 +106,7 @@ class ResultActivity : AppCompatActivity(), ImageClassifierHelper.ClassifierList
         finish()
     }
 
-    private fun SaveToDatabase(imageUri: Uri, result: String) {
+    private fun saveToDatabase(imageUri: Uri, result: String) {
         if (result.isNotEmpty()) {
             val fileName = "cropped_image_${System.currentTimeMillis()}.jpg"
             val destinationUri = Uri.fromFile(File(cacheDir, fileName))
@@ -95,7 +116,7 @@ class ResultActivity : AppCompatActivity(), ImageClassifierHelper.ClassifierList
                 }
             }
 
-            val history = CancerHistory(imagePath = destinationUri.toString(), result = result)
+            val history = DataHistory(imagePath = destinationUri.toString(), result = result)
             GlobalScope.launch(Dispatchers.IO) {
                 val database = LocalDatabase.getDatabase(applicationContext)
                 try {
