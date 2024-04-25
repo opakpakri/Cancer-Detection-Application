@@ -25,7 +25,7 @@ class ResultActivity : AppCompatActivity(), ImageClassifierHelper.ClassifierList
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityResultBinding.inflate(layoutInflater)
-        setContentView(R.layout.activity_result)
+        setContentView(binding.root)
 
         imageClassifierHelper = ImageClassifierHelper(
             context = this,
