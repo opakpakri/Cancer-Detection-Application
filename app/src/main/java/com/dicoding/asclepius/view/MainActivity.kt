@@ -1,12 +1,17 @@
 package com.dicoding.asclepius.view
 
+import android.Manifest
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.dicoding.asclepius.databinding.ActivityMainBinding
 import com.yalantis.ucrop.UCrop
 import java.io.File
@@ -30,8 +35,49 @@ class MainActivity : AppCompatActivity() {
             analyzeImage()
         }
 
+        binding.cameraButton.setOnClickListener {
+            requestCameraPermission()
+        }
+
         binding.HistoryButton.setOnClickListener {
             moveToHistory()
+        }
+    }
+
+    private fun requestCameraPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), CAMERA_REQUEST_CODE)
+        } else {
+            startCamera()
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == CAMERA_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startCamera()
+            } else {
+                Toast.makeText(this, "Camera permission is required to use the camera", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun startCamera() {
+        //currentImageUri = getImageUri(this)
+        croppedImageUri = getImageUri(this)
+        launcherIntentCamera.launch(croppedImageUri)
+    }
+
+    private val launcherIntentCamera = registerForActivityResult(
+        ActivityResultContracts.TakePicture()
+    ) { isSuccess ->
+        if (isSuccess) {
+            croppedImageUri?.let { uri ->
+                currentImageUri = uri
+                startUCrop(uri)
+                showImage()
+            } ?: showToast("Failed to get image URI")
         }
     }
 
@@ -49,8 +95,8 @@ class MainActivity : AppCompatActivity() {
             val selectedImg = result.data?.data
             selectedImg?.let { uri ->
                 currentImageUri = uri
-                showImage()
                 startUCrop(uri)
+                showImage()
             } ?: showToast("Failed to get image URI")
         }
     }
@@ -83,7 +129,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showImage() {
-        currentImageUri?.let { uri ->
+        croppedImageUri?.let { uri ->
             Log.d(TAG, "Displaying image: $uri")
             binding.previewImageView.setImageURI(uri)
         } ?: Log.d(TAG, "No image to display")
@@ -114,5 +160,6 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val TAG = "MainActivity"
+        private const val CAMERA_REQUEST_CODE = 101
     }
 }
